@@ -34,13 +34,23 @@ class GanttChartDefaultEventRowPerDayBuilder extends StatelessWidget {
             : null;
     return Container(
       decoration: BoxDecoration(
-        color: color,
+        color: isHoliday ? color : null,
         border: const BorderDirectional(
           top: BorderSide.none,
           bottom: BorderSide.none,
           start: BorderSide(),
         ),
       ),
+      child: isHoliday
+          ? null
+          : LayoutBuilder(
+              builder: (context, constraints) => Center(
+                child: Container(
+                  height: constraints.maxHeight / 2,
+                  color: color,
+                ),
+              ),
+            ),
     );
   }
 }
