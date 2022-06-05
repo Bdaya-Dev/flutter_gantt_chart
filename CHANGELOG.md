@@ -1,3 +1,7 @@
+## 0.0.3 - 05 June 2022
+
+* Fix mathematical error when calculating event start date
+
 ## 0.0.2 - 05 June 2022
 
 * Improve event cell display to show a smaller rectangle instead of the entire cell

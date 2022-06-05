@@ -4,7 +4,8 @@ import 'package:flutter/widgets.dart';
 import 'gantt_view.dart';
 import 'week_day.dart';
 
-//start + (d + holidays between (start) and (start + d))
+/// start + (d + holidays between (start) and (start + d))
+/// note that this is execlusive for last date
 DateTime getRelativeDate(
   BuildContext context,
   DateTime start,
@@ -143,7 +144,7 @@ class GanttRelativeEvent extends GanttEventBase {
       getRelativeDate(
         context,
         ganttStartDate,
-        relativeToStart,
+        relativeToStart + const Duration(days: 1), //start date + relative + 1
         weekends,
         isExtraHolidayFunc,
       );
