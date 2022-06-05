@@ -1,6 +1,6 @@
 name: gantt_chart
 description: A fully customizable gantt chart package written purely in dart
-version: 0.0.3
+version: 0.0.4
 homepage: https://github.com/Bdaya-Dev/flutter_gantt_chart
 
 environment:

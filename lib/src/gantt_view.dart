@@ -40,7 +40,6 @@ class GanttChartView extends StatefulWidget {
     this.dayHeaderBuilder,
     this.weekHeaderBuilder,
     this.isExtraHoliday,
-    this.infiniteWeeks = false,
     this.eventRowPerWeekBuilder,
     this.startOfTheWeek = WeekDay.sunday,
     this.eventCellPerDayBuilder,
@@ -64,9 +63,6 @@ class GanttChartView extends StatefulWidget {
 
   /// Color to mark holiday
   final Color? holidayColor;
-
-  /// Show infinite weeks
-  final bool infiniteWeeks;
 
   /// Initial datetime
   final DateTime startDate;
