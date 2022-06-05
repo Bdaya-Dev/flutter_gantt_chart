@@ -26,7 +26,7 @@ class GanttChartView extends StatefulWidget {
     Key? key,
     required this.events,
     required this.startDate,
-    required this.maxDuration,
+    this.maxDuration,
     this.stickyAreaWidth = 200,
     this.stickyAreaEventBuilder,
     this.stickyAreaDayBuilder,
@@ -72,7 +72,7 @@ class GanttChartView extends StatefulWidget {
   final DateTime startDate;
 
   /// Maximum duration that will be displayed by the gantt chart
-  final Duration maxDuration;
+  final Duration? maxDuration;
 
   /// override this to check if specific date is a holiday
   final IsExtraHolidayFunc? isExtraHoliday;
@@ -248,7 +248,9 @@ class GanttChartViewState extends State<GanttChartView> {
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               controller: controller,
-              itemCount: (widget.maxDuration.inDays / 7).ceil(),
+              itemCount: widget.maxDuration == null
+                  ? null
+                  : (widget.maxDuration!.inDays / 7).ceil(),
               itemBuilder: (context, index) {
                 //map index to week
 

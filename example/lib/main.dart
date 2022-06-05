@@ -109,6 +109,11 @@ class _MyHomePageState extends State<MyHomePage> {
             stickyAreaWidth: 200,
             showStickyArea: showStickyArea,
             showDays: showDaysRow,
+            weekEnds: const {WeekDay.friday, WeekDay.saturday},
+            isExtraHoliday: (context, day) {
+              //define custom holiday logic for each day
+              return DateUtils.isSameDay(DateTime(2022, 7, 1), day);
+            },
             startOfTheWeek: WeekDay.sunday,
             events: [
               GanttRelativeEvent(
