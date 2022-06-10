@@ -22,6 +22,16 @@ void main() {
           getRelativeDate(
             context,
             start,
+            const Duration(days: 0),
+            weekends,
+            isHoliday,
+          ),
+          DateTime(2022, 06, 04),
+        );
+        expect(
+          getRelativeDate(
+            context,
+            start,
             const Duration(days: 1),
             weekends,
             isHoliday,

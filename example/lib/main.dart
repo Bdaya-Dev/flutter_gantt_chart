@@ -118,6 +118,11 @@ class _MyHomePageState extends State<MyHomePage> {
             events: [
               GanttRelativeEvent(
                 relativeToStart: const Duration(days: 0),
+                duration: const Duration(days: 0),
+                displayName: 'Fake Event',
+              ),
+              GanttRelativeEvent(
+                relativeToStart: const Duration(days: 0),
                 duration: const Duration(days: 5),
                 displayName: 'This is a very long event name',
               ),

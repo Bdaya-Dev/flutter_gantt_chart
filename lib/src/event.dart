@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -13,20 +15,20 @@ DateTime getRelativeDate(
   Set<WeekDay> weekends,
   IsExtraHolidayFunc isExtraHolidayFunc,
 ) {
-  var extraDurationDays = 0;
-  var workDayIndex = 0;
-  while (true) {
-    if (workDayIndex == d.inDays) break;
-    final dateToTest =
-        start.add(Duration(days: workDayIndex + extraDurationDays));
-    final weekday = WeekDay.fromIntWeekday(dateToTest.weekday);
-    if (weekends.contains(weekday) || isExtraHolidayFunc(context, dateToTest)) {
-      extraDurationDays++;
-    } else {
-      workDayIndex++;
+  if (d.inDays == 0) return start;
+  final targetWorkDays = d.inDays;
+  var index = 0;
+  var workDaysCount = 0;
+  while (workDaysCount < targetWorkDays) {
+    final dayToTest = DateUtils.addDaysToDate(start, index);
+    final weekday = WeekDay.fromIntWeekday(dayToTest.weekday);
+    if (!weekends.contains(weekday) &&
+        !isExtraHolidayFunc(context, dayToTest)) {
+      workDaysCount++;
     }
+    index++;
   }
-  return start.add(Duration(days: workDayIndex + extraDurationDays - 1));
+  return DateUtils.addDaysToDate(start, index - 1);
 }
 
 abstract class GanttEventBase {
@@ -144,7 +146,7 @@ class GanttRelativeEvent extends GanttEventBase {
       getRelativeDate(
         context,
         ganttStartDate,
-        relativeToStart + const Duration(days: 1), //start date + relative + 1
+        relativeToStart, //start date + relative + 1
         weekends,
         isExtraHolidayFunc,
       );
