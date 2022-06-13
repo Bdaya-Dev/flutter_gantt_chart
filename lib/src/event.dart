@@ -1,14 +1,19 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-
 import 'gantt_view.dart';
 import 'week_day.dart';
 
-/// start + (d + holidays between (start) and (start + d))
-/// note that this is execlusive for last date
-DateTime getRelativeDate(
+/// *d* workdays starting from [start] (includes start if it was a work day)
+///
+/// result date is execlusive.
+///
+/// so if you have monday as start, and you need 2 work days,
+/// your 2 workdays will be monday + tuesday,
+/// but the result date will be on widnesday.
+///
+/// this is so you can test like
+///
+/// someDate.isBefore(endDate)
+DateTime getRelativeDateInclusiveStartExeclusiveEnd(
   BuildContext context,
   DateTime start,
   Duration d,
@@ -19,16 +24,23 @@ DateTime getRelativeDate(
   final targetWorkDays = d.inDays;
   var index = 0;
   var workDaysCount = 0;
-  while (workDaysCount < targetWorkDays) {
+  while (true) {
     final dayToTest = DateUtils.addDaysToDate(start, index);
+    //
     final weekday = WeekDay.fromIntWeekday(dayToTest.weekday);
     if (!weekends.contains(weekday) &&
         !isExtraHolidayFunc(context, dayToTest)) {
       workDaysCount++;
+      index++;
+      if (workDaysCount < targetWorkDays) {
+      } else {
+        break;
+      }
+    } else {
+      index++;
     }
-    index++;
   }
-  return DateUtils.addDaysToDate(start, index - 1);
+  return DateUtils.addDaysToDate(start, index);
 }
 
 abstract class GanttEventBase {
@@ -37,14 +49,14 @@ abstract class GanttEventBase {
   Color? get suggestedColor;
   String Function(BuildContext context)? get displayNameBuilder;
 
-  DateTime getStartDate(
+  DateTime getStartDateInclusive(
     BuildContext context,
     DateTime ganttStartDate,
     Set<WeekDay> weekends,
     IsExtraHolidayFunc isExtraHolidayFunc,
   );
 
-  DateTime getEndDate(
+  DateTime getEndDateExeclusive(
     BuildContext context,
     DateTime calculatedStartDate,
     Set<WeekDay> weekends,
@@ -77,17 +89,17 @@ class GanttAbsoluteEvent extends GanttEventBase {
   });
 
   @override
-  DateTime getEndDate(
+  DateTime getEndDateExeclusive(
     BuildContext context,
     DateTime calculatedStartDate,
     Set<WeekDay> weekends,
     IsExtraHolidayFunc isExtraHolidayFunc,
   ) {
-    return endDate;
+    return DateUtils.addDaysToDate(endDate, 1);
   }
 
   @override
-  DateTime getStartDate(
+  DateTime getStartDateInclusive(
     BuildContext context,
     DateTime ganttStartDate,
     Set<WeekDay> weekends,
@@ -122,31 +134,31 @@ class GanttRelativeEvent extends GanttEventBase {
   });
 
   @override
-  DateTime getEndDate(
-    BuildContext context,
-    DateTime calculatedStartDate,
-    Set<WeekDay> weekends,
-    IsExtraHolidayFunc isExtraHolidayFunc,
-  ) =>
-      getRelativeDate(
-        context,
-        calculatedStartDate,
-        duration,
-        weekends,
-        isExtraHolidayFunc,
-      );
-
-  @override
-  DateTime getStartDate(
+  DateTime getStartDateInclusive(
     BuildContext context,
     DateTime ganttStartDate,
     Set<WeekDay> weekends,
     IsExtraHolidayFunc isExtraHolidayFunc,
   ) =>
-      getRelativeDate(
+      getRelativeDateInclusiveStartExeclusiveEnd(
         context,
         ganttStartDate,
-        relativeToStart, //start date + relative + 1
+        relativeToStart,
+        weekends,
+        isExtraHolidayFunc,
+      );
+
+  @override
+  DateTime getEndDateExeclusive(
+    BuildContext context,
+    DateTime calculatedStartDate,
+    Set<WeekDay> weekends,
+    IsExtraHolidayFunc isExtraHolidayFunc,
+  ) =>
+      getRelativeDateInclusiveStartExeclusiveEnd(
+        context,
+        calculatedStartDate,
+        duration,
         weekends,
         isExtraHolidayFunc,
       );

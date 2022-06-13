@@ -292,18 +292,19 @@ class GanttChartViewState extends State<GanttChartView> {
                       //Body
                       ...widget.events.mapIndexed(
                         (index, e) {
-                          final actStartDate = e.getStartDate(
+                          final actStartDate = e.getStartDateInclusive(
                             context,
                             startDate,
                             weekEnds,
                             isHolidayCached,
                           );
-                          final actEndDate = e.getEndDate(
+                          final actEndDate = e.getEndDateExeclusive(
                             context,
                             actStartDate,
                             weekEnds,
                             isHolidayCached,
                           );
+
                           final eventColor = eventColors[index];
                           return Container(
                             decoration: BoxDecoration(

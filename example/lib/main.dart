@@ -81,89 +81,96 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          SwitchListTile.adaptive(
-            value: showDaysRow,
-            title: Text('Show Days Row ?'),
-            onChanged: (newVal) {
-              setState(() {
-                showDaysRow = newVal;
-              });
-            },
-          ),
-          SwitchListTile.adaptive(
-            value: showStickyArea,
-            title: Text('Show Sticky Area ?'),
-            onChanged: (newVal) {
-              setState(() {
-                showStickyArea = newVal;
-              });
-            },
-          ),
-          GanttChartView(
-            maxDuration: const Duration(days: 30 * 2),
-            startDate: DateTime(2022, 6, 7),
-            dayWidth: dayWidth,
-            eventHeight: 30,
-            stickyAreaWidth: 200,
-            showStickyArea: showStickyArea,
-            showDays: showDaysRow,
-            weekEnds: const {WeekDay.friday, WeekDay.saturday},
-            isExtraHoliday: (context, day) {
-              //define custom holiday logic for each day
-              return DateUtils.isSameDay(DateTime(2022, 7, 1), day);
-            },
-            startOfTheWeek: WeekDay.sunday,
-            events: [
-              GanttRelativeEvent(
-                relativeToStart: const Duration(days: 0),
-                duration: const Duration(days: 0),
-                displayName: 'Fake Event',
-              ),
-              GanttRelativeEvent(
-                relativeToStart: const Duration(days: 0),
-                duration: const Duration(days: 5),
-                displayName: 'This is a very long event name',
-              ),
-              GanttRelativeEvent(
-                relativeToStart: const Duration(days: 1),
-                duration: const Duration(days: 6),
-                displayName: '2',
-              ),
-              GanttRelativeEvent(
-                relativeToStart: const Duration(days: 2),
-                duration: const Duration(days: 7),
-                displayName: '3',
-              ),
-              GanttRelativeEvent(
-                relativeToStart: const Duration(days: 3),
-                duration: const Duration(days: 8),
-                displayName: '4',
-              ),
-              GanttRelativeEvent(
-                relativeToStart: const Duration(days: 4),
-                duration: const Duration(days: 9),
-                displayName: '5',
-              ),
-              GanttRelativeEvent(
-                relativeToStart: const Duration(days: 5),
-                duration: const Duration(days: 10),
-                displayName: '6',
-              ),
-              GanttRelativeEvent(
-                relativeToStart: const Duration(days: 6),
-                duration: const Duration(days: 11),
-                displayName: '7',
-              ),
-              GanttRelativeEvent(
-                relativeToStart: const Duration(days: 7),
-                duration: const Duration(days: 12),
-                displayName: '8',
-              ),
-            ],
-          ),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            SwitchListTile.adaptive(
+              value: showDaysRow,
+              title: Text('Show Days Row ?'),
+              onChanged: (newVal) {
+                setState(() {
+                  showDaysRow = newVal;
+                });
+              },
+            ),
+            SwitchListTile.adaptive(
+              value: showStickyArea,
+              title: Text('Show Sticky Area ?'),
+              onChanged: (newVal) {
+                setState(() {
+                  showStickyArea = newVal;
+                });
+              },
+            ),
+            GanttChartView(
+              maxDuration: const Duration(days: 30 * 2),
+              startDate: DateTime(2022, 6, 7),
+              dayWidth: dayWidth,
+              eventHeight: 40,
+              stickyAreaWidth: 200,
+              showStickyArea: showStickyArea,
+              showDays: showDaysRow,
+              weekEnds: const {WeekDay.friday, WeekDay.saturday},
+              isExtraHoliday: (context, day) {
+                //define custom holiday logic for each day
+                return DateUtils.isSameDay(DateTime(2022, 7, 1), day);
+              },
+              startOfTheWeek: WeekDay.sunday,
+              events: [
+                GanttRelativeEvent(
+                  relativeToStart: const Duration(days: 0),
+                  duration: const Duration(days: 0),
+                  displayName: 'Fake Event',
+                ),
+                GanttRelativeEvent(
+                  relativeToStart: const Duration(days: 0),
+                  duration: const Duration(days: 5),
+                  displayName: '1) This is a very long event name',
+                ),
+                GanttRelativeEvent(
+                  relativeToStart: const Duration(days: 1),
+                  duration: const Duration(days: 6),
+                  displayName: '2',
+                ),
+                GanttRelativeEvent(
+                  relativeToStart: const Duration(days: 2),
+                  duration: const Duration(days: 7),
+                  displayName: '3',
+                ),
+                GanttRelativeEvent(
+                  relativeToStart: const Duration(days: 3),
+                  duration: const Duration(days: 8),
+                  displayName: '4',
+                ),
+                GanttRelativeEvent(
+                  relativeToStart: const Duration(days: 4),
+                  duration: const Duration(days: 9),
+                  displayName: '5',
+                ),
+                GanttRelativeEvent(
+                  relativeToStart: const Duration(days: 5),
+                  duration: const Duration(days: 10),
+                  displayName: '6',
+                ),
+                GanttRelativeEvent(
+                  relativeToStart: const Duration(days: 6),
+                  duration: const Duration(days: 11),
+                  displayName: '7',
+                ),
+                GanttRelativeEvent(
+                  relativeToStart: const Duration(days: 7),
+                  duration: const Duration(days: 12),
+                  displayName: '8',
+                ),
+                GanttAbsoluteEvent(
+                  displayName: 'Absoulte Date event',
+                  startDate: DateTime(2022, 6, 7),
+                  endDate: DateTime(2022, 6, 20),
+                )
+              ],
+            ),
+          ],
+        ),
       ),
       // floatingActionButton: FloatingActionButton(
       //   onPressed: onZoomIn,
