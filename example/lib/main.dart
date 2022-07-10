@@ -65,7 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Gantt chart demo'),
+        title: const Text('Gantt chart demo'),
         actions: [
           IconButton(
             onPressed: onZoomIn,
@@ -86,7 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
           children: [
             SwitchListTile.adaptive(
               value: showDaysRow,
-              title: Text('Show Days Row ?'),
+              title: const Text('Show Days Row ?'),
               onChanged: (newVal) {
                 setState(() {
                   showDaysRow = newVal;
@@ -95,7 +95,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             SwitchListTile.adaptive(
               value: showStickyArea,
-              title: Text('Show Sticky Area ?'),
+              title: const Text('Show Sticky Area ?'),
               onChanged: (newVal) {
                 setState(() {
                   showStickyArea = newVal;
