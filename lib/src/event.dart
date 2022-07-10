@@ -47,7 +47,7 @@ abstract class GanttEventBase {
   Object? get extra;
   String? get displayName;
   Color? get suggestedColor;
-  String Function(BuildContext context)? get displayNameBuilder;
+  Widget Function(BuildContext context)? get displayNameBuilder;
 
   DateTime getStartDateInclusive(
     BuildContext context,
@@ -62,9 +62,6 @@ abstract class GanttEventBase {
     Set<WeekDay> weekends,
     IsExtraHolidayFunc isExtraHolidayFunc,
   );
-
-  String getDisplayName(BuildContext context) =>
-      displayName ?? displayNameBuilder?.call(context) ?? '';
 }
 
 class GanttAbsoluteEvent extends GanttEventBase {
@@ -73,7 +70,7 @@ class GanttAbsoluteEvent extends GanttEventBase {
   @override
   final String? displayName;
   @override
-  final String Function(BuildContext context)? displayNameBuilder;
+  final Widget Function(BuildContext context)? displayNameBuilder;
   @override
   final Object? extra;
 
@@ -118,7 +115,7 @@ class GanttRelativeEvent extends GanttEventBase {
   @override
   final String? displayName;
   @override
-  final String Function(BuildContext context)? displayNameBuilder;
+  final Widget Function(BuildContext context)? displayNameBuilder;
 
   @override
   final Color? suggestedColor;

@@ -226,9 +226,9 @@ class GanttChartViewState extends State<GanttChartView> {
                             ),
                           ),
                           child: Center(
-                            child: Text(
-                              event.getDisplayName(context),
-                            ),
+                            child: event.displayNameBuilder != null
+                                ? event.displayNameBuilder!.call(context)
+                                : Text(event.displayName ?? ""),
                           ),
                         ),
                   );
