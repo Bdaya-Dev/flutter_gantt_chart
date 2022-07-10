@@ -56,7 +56,7 @@ abstract class GanttEventBase {
     IsExtraHolidayFunc isExtraHolidayFunc,
   );
 
-  DateTime getEndDateExeclusive(
+  DateTime getEndDateExclusive(
     BuildContext context,
     DateTime calculatedStartDate,
     Set<WeekDay> weekends,
@@ -86,7 +86,7 @@ class GanttAbsoluteEvent extends GanttEventBase {
   });
 
   @override
-  DateTime getEndDateExeclusive(
+  DateTime getEndDateExclusive(
     BuildContext context,
     DateTime calculatedStartDate,
     Set<WeekDay> weekends,
@@ -146,7 +146,7 @@ class GanttRelativeEvent extends GanttEventBase {
       );
 
   @override
-  DateTime getEndDateExeclusive(
+  DateTime getEndDateExclusive(
     BuildContext context,
     DateTime calculatedStartDate,
     Set<WeekDay> weekends,

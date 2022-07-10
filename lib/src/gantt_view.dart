@@ -298,7 +298,7 @@ class GanttChartViewState extends State<GanttChartView> {
                             weekEnds,
                             isHolidayCached,
                           );
-                          final actEndDate = e.getEndDateExeclusive(
+                          final actEndDate = e.getEndDateExclusive(
                             context,
                             actStartDate,
                             weekEnds,
