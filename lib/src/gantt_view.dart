@@ -1,14 +1,12 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:gantt_chart/src/gantt_default_day_header.dart';
 import 'package:gantt_chart/src/gantt_default_week_header.dart';
 import 'package:gantt_chart/src/week_day.dart';
-import 'dart:math' as math;
+
 import 'event.dart';
 import 'gantt_default_event_row_per_week.dart';
-import 'package:collection/collection.dart';
 
-Color randColor() =>
-    Colors.primaries[math.Random().nextInt(Colors.primaries.length)];
 typedef IsExtraHolidayFunc = bool Function(BuildContext context, DateTime date);
 typedef EventCellBuilderFunction = Widget Function(
   BuildContext context,
@@ -156,8 +154,9 @@ class GanttChartViewState extends State<GanttChartView> {
   void initState() {
     super.initState();
     eventColors.clear();
-    eventColors
-        .addAll(widget.events.map((e) => e.suggestedColor ?? randColor()));
+    eventColors.addAll(widget.events.asMap().entries.map((e) =>
+        e.value.suggestedColor ??
+        Colors.primaries[e.key % Colors.primaries.length]));
 
     controller = ScrollController(
         // initialScrollOffset: durationToWeekOffset(
