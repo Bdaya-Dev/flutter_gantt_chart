@@ -37,6 +37,7 @@ class GanttChartView extends StatefulWidget {
     this.weekEnds = const {WeekDay.friday, WeekDay.saturday},
     this.dayHeaderBuilder,
     this.weekHeaderBuilder,
+    this.weekHeaderDecoration,
     this.isExtraHoliday,
     this.eventRowPerWeekBuilder,
     this.startOfTheWeek = WeekDay.sunday,
@@ -80,6 +81,9 @@ class GanttChartView extends StatefulWidget {
   /// [weekDate] is the start of the week, which will always be a [startOfTheWeek]
   final Widget Function(BuildContext context, DateTime weekDate)?
       weekHeaderBuilder;
+
+  /// the cell decoration of the week header when using the default builder
+  final Decoration? weekHeaderDecoration;
 
   /// Show sticky row headers on the left
   final bool showStickyArea;
@@ -265,6 +269,7 @@ class GanttChartViewState extends State<GanttChartView> {
                             widget.weekHeaderBuilder?.call(context, weekDate) ??
                                 GanttChartDefaultWeekHeader(
                                   weekDate: weekDate,
+                                  decoration: widget.weekHeaderDecoration,
                                 ),
                       ),
                       if (widget.showDays)
