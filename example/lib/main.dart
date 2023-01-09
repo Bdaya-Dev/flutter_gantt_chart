@@ -27,9 +27,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       scrollBehavior: MyCustomScrollBehavior(),
       title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: ThemeData(primarySwatch: Colors.blue),
       home: const MyHomePage(),
     );
   }
@@ -65,19 +63,15 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Gantt chart demo'),
+        title: const Text('Gantt chart demo'),
         actions: [
           IconButton(
             onPressed: onZoomIn,
-            icon: const Icon(
-              Icons.zoom_in,
-            ),
+            icon: const Icon(Icons.zoom_in),
           ),
           IconButton(
             onPressed: onZoomOut,
-            icon: const Icon(
-              Icons.zoom_out,
-            ),
+            icon: const Icon(Icons.zoom_out),
           ),
         ],
       ),
@@ -86,7 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
           children: [
             SwitchListTile.adaptive(
               value: showDaysRow,
-              title: Text('Show Days Row ?'),
+              title: const Text('Show Days Row ?'),
               onChanged: (newVal) {
                 setState(() {
                   showDaysRow = newVal;
@@ -95,7 +89,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             SwitchListTile.adaptive(
               value: showStickyArea,
-              title: Text('Show Sticky Area ?'),
+              title: const Text('Show Sticky Area ?'),
               onChanged: (newVal) {
                 setState(() {
                   showStickyArea = newVal;
@@ -104,18 +98,18 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             GanttChartView(
               maxDuration: const Duration(days: 30 * 2),
-              startDate: DateTime(2022, 6, 7),
+              startDate: DateTime.now(),
               dayWidth: dayWidth,
               eventHeight: 40,
               stickyAreaWidth: 200,
               showStickyArea: showStickyArea,
               showDays: showDaysRow,
-              weekEnds: const {WeekDay.friday, WeekDay.saturday},
+              weekEnds: const {WeekDay.saturday, WeekDay.sunday},
               isExtraHoliday: (context, day) {
                 //define custom holiday logic for each day
-                return DateUtils.isSameDay(DateTime(2022, 7, 1), day);
+                return DateUtils.isSameDay(DateTime(2023, 1, 1), day);
               },
-              startOfTheWeek: WeekDay.sunday,
+              startOfTheWeek: WeekDay.monday,
               events: [
                 GanttRelativeEvent(
                   relativeToStart: const Duration(days: 0),
@@ -163,9 +157,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   displayName: '8',
                 ),
                 GanttAbsoluteEvent(
-                  displayName: 'Absoulte Date event',
-                  startDate: DateTime(2022, 6, 7),
-                  endDate: DateTime(2022, 6, 20),
+                  displayName: 'Absolute Date event',
+                  startDate: DateTime.now().subtract(const Duration(days: 7)),
+                  endDate: DateTime.now().add(const Duration(days: 7)),
                 )
               ],
             ),

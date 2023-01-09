@@ -1,5 +1,14 @@
 import 'package:flutter/material.dart';
 
+// TODO extend display with week number
+extension WeeksBetween on DateTime {
+  int get weekNumberOfTheYear => (DateTime.utc(year, month, day)
+              .difference(DateTime.utc(year, 1, 1))
+              .inDays /
+          7)
+      .ceil();
+}
+
 class GanttChartDefaultWeekHeader extends StatelessWidget {
   const GanttChartDefaultWeekHeader({
     Key? key,
@@ -27,7 +36,8 @@ class GanttChartDefaultWeekHeader extends StatelessWidget {
           } else if (constraints.maxWidth < 7 * 20) {
             txt = '${weekDate.month}-${weekDate.year % 100}';
           } else {
-            txt = '${weekDate.day}-${weekDate.month}-${weekDate.year}';
+            txt =
+                '${weekDate.day}-${weekDate.month}-${weekDate.year}  #${weekDate.weekNumberOfTheYear} ';
           }
 
           return Text(

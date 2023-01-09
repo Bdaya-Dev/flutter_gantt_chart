@@ -33,7 +33,7 @@ class GanttChartView extends StatefulWidget {
     this.dayWidth = 30,
     this.eventHeight = 30,
     this.weekHeaderHeight = 30,
-    this.dayHeaderHeight = 30,
+    this.dayHeaderHeight = 40,
     this.weekEnds = const {WeekDay.friday, WeekDay.saturday},
     this.dayHeaderBuilder,
     this.weekHeaderBuilder,

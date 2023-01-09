@@ -29,7 +29,7 @@ class GanttChartDefaultDayHeader extends StatelessWidget {
       ),
       child: Center(
         child: Text(
-          weekDay.symbol,
+          '${weekDay.symbol}\n${date.day}',
           style: TextStyle(color: textColor),
         ),
       ),
