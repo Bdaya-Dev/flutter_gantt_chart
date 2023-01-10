@@ -1,5 +1,3 @@
-// Consider localizing this
-
 enum WeekDay {
   monday(DateTime.monday, 'M'),
   tuesday(DateTime.tuesday, 'Tu'),

@@ -104,7 +104,7 @@ class _MyHomePageState extends State<MyHomePage> {
               stickyAreaWidth: 200,
               showStickyArea: showStickyArea,
               showDays: showDaysRow,
-              weekEnds: const {WeekDay.saturday, WeekDay.sunday},
+              weekEnds: const {WeekDay.friday, WeekDay.saturday},
               isExtraHoliday: (context, day) {
                 //define custom holiday logic for each day
                 return DateUtils.isSameDay(DateTime(2023, 1, 1), day);
@@ -158,7 +158,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 GanttAbsoluteEvent(
                   displayName: 'Absolute Date event',
-                  startDate: DateTime.now().subtract(const Duration(days: 7)),
+                  startDate: DateTime.now(),
                   endDate: DateTime.now().add(const Duration(days: 7)),
                 )
               ],
