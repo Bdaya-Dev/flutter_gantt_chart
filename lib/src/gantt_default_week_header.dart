@@ -15,7 +15,7 @@ class GanttChartDefaultWeekHeader extends StatelessWidget {
             7)
         .ceil();
 
-    return numberWeek == 0 ? 1 : numberWeek;
+    return numberWeek;
   }
 
   @override
