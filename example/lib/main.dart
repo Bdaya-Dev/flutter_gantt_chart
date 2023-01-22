@@ -48,6 +48,10 @@ class _MyHomePageState extends State<MyHomePage> {
   double dayWidth = 30;
   bool showDaysRow = true;
   bool showStickyArea = true;
+  bool customStickyArea = false;
+  bool customWeekHeader = false;
+  bool customDayHeader = false;
+
   void onZoomIn() {
     setState(() {
       dayWidth += 5;
@@ -65,7 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Gantt chart demo'),
+        title: const Text('Gantt chart demo'),
         actions: [
           IconButton(
             onPressed: onZoomIn,
@@ -86,21 +90,28 @@ class _MyHomePageState extends State<MyHomePage> {
           children: [
             SwitchListTile.adaptive(
               value: showDaysRow,
-              title: Text('Show Days Row ?'),
-              onChanged: (newVal) {
-                setState(() {
-                  showDaysRow = newVal;
-                });
-              },
+              title: const Text('Show Days Row ?'),
+              onChanged: (v) => setState(() => showDaysRow = v),
             ),
             SwitchListTile.adaptive(
               value: showStickyArea,
-              title: Text('Show Sticky Area ?'),
-              onChanged: (newVal) {
-                setState(() {
-                  showStickyArea = newVal;
-                });
-              },
+              title: const Text('Show Sticky Area ?'),
+              onChanged: (v) => setState(() => showStickyArea = v),
+            ),
+            SwitchListTile.adaptive(
+              value: customStickyArea,
+              title: const Text('Custom Sticky Area ?'),
+              onChanged: (v) => setState(() => customStickyArea = v),
+            ),
+            SwitchListTile.adaptive(
+              value: customWeekHeader,
+              title: const Text('Custom Week Header ?'),
+              onChanged: (v) => setState(() => customWeekHeader = v),
+            ),
+            SwitchListTile.adaptive(
+              value: customDayHeader,
+              title: const Text('Custom Day Header ?'),
+              onChanged: (v) => setState(() => customDayHeader = v),
             ),
             GanttChartView(
               maxDuration: const Duration(days: 30 * 2),
@@ -109,6 +120,43 @@ class _MyHomePageState extends State<MyHomePage> {
               eventHeight: 40,
               stickyAreaWidth: 200,
               showStickyArea: showStickyArea,
+              stickyAreaEventBuilder: customStickyArea
+                  ? (context, eventIndex, event, eventColor) => eventIndex == 0
+                      ? Container(
+                          color: Colors.yellow,
+                          child: Center(
+                            child: Text("Custom Widget: ${event.displayName}"),
+                          ),
+                        )
+                      : GanttChartDefaultStickyAreaCell(
+                          event: event,
+                          eventIndex: eventIndex,
+                          eventColor: eventColor,
+                          widgetBuilder: (context) => Text(
+                            "Default Widget with custom colors: ${event.displayName}",
+                            textAlign: TextAlign.center,
+                          ),
+                        )
+                  : null,
+              weekHeaderBuilder: customWeekHeader
+                  ? (context, weekDate) => GanttChartDefaultWeekHeader(
+                      weekDate: weekDate,
+                      color: Colors.black,
+                      backgroundColor: Colors.yellow,
+                      border: const BorderDirectional(
+                        end: BorderSide(color: Colors.green),
+                      ))
+                  : null,
+              dayHeaderBuilder: customDayHeader
+                  ? (context, date, bool isHoliday) =>
+                      GanttChartDefaultDayHeader(
+                        date: date,
+                        isHoliday: isHoliday,
+                        color: isHoliday ? Colors.yellow : Colors.black,
+                        backgroundColor:
+                            isHoliday ? Colors.grey : Colors.yellow,
+                      )
+                  : null,
               showDays: showDaysRow,
               weekEnds: const {WeekDay.friday, WeekDay.saturday},
               isExtraHoliday: (context, day) {

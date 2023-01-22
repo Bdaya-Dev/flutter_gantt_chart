@@ -3,36 +3,46 @@ import 'package:flutter/material.dart';
 import 'week_day.dart';
 
 class GanttChartDefaultDayHeader extends StatelessWidget {
+  final Color? color;
+  final Color? backgroundColor;
+  final BoxBorder? border;
+
   const GanttChartDefaultDayHeader({
     Key? key,
     required this.date,
     required this.isHoliday,
+    this.color,
+    this.backgroundColor,
+    this.border,
   }) : super(key: key);
 
   final DateTime date;
-  final bool Function(BuildContext context, DateTime date) isHoliday;
+  final bool isHoliday;
 
   @override
   Widget build(BuildContext context) {
     final weekDay = WeekDay.fromIntWeekday(date.weekday);
-    final isHolidayV = isHoliday.call(context, date);
-    final bgColor = isHolidayV ? Colors.grey.shade800 : Colors.white;
-    final textColor = isHolidayV ? Colors.white : Colors.black;
     return Container(
       decoration: BoxDecoration(
-        color: bgColor,
-        border: const BorderDirectional(
-          bottom: BorderSide(),
-          // end: BorderSide(),
-          start: BorderSide(),
-        ),
+        color: backgroundColor ?? defaultBackgroundColor(isHoliday),
+        border: border ?? defaultBorder,
       ),
       child: Center(
         child: Text(
           weekDay.symbol,
-          style: TextStyle(color: textColor),
+          style: TextStyle(color: color ?? defaultColor(isHoliday)),
         ),
       ),
     );
   }
+
+  Color defaultColor(bool isHoliday) => isHoliday ? Colors.white : Colors.black;
+
+  Color defaultBackgroundColor(bool isHoliday) =>
+      isHoliday ? Colors.grey.shade800 : Colors.white;
+
+  BoxBorder get defaultBorder => const BorderDirectional(
+        bottom: BorderSide(),
+        start: BorderSide(),
+      );
 }
