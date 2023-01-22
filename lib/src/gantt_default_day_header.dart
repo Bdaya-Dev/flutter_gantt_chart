@@ -3,6 +3,11 @@ import 'package:flutter/material.dart';
 import 'week_day.dart';
 
 class GanttChartDefaultDayHeader extends StatelessWidget {
+  static const defaultColor = Colors.black;
+  static const defaultBackgroundColor = Colors.white;
+  static const defaultHolidayColor = Colors.white;
+  static final defaultHolidayBackgroundColor = Colors.grey.shade800;
+
   final Color? color;
   final Color? backgroundColor;
   final BoxBorder? border;
@@ -25,27 +30,28 @@ class GanttChartDefaultDayHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: backgroundColor ?? defaultBackgroundColor(isHoliday),
-        border: border ?? defaultBorder,
+        color: backgroundColor ?? _defaultBackgroundColor(isHoliday),
+        border: border ?? _defaultBorder,
       ),
-      child: widgetBuilder?.call(context) ?? defaultChild(context),
+      child: widgetBuilder?.call(context) ?? _defaultChild(context),
     );
   }
 
-  Color defaultColor(bool isHoliday) => isHoliday ? Colors.white : Colors.black;
+  Color _defaultColor(bool isHoliday) =>
+      isHoliday ? defaultHolidayColor : defaultColor;
 
-  Color defaultBackgroundColor(bool isHoliday) =>
-      isHoliday ? Colors.grey.shade800 : Colors.white;
+  Color _defaultBackgroundColor(bool isHoliday) =>
+      isHoliday ? defaultHolidayBackgroundColor : defaultBackgroundColor;
 
-  BoxBorder get defaultBorder => const BorderDirectional(
+  BoxBorder get _defaultBorder => const BorderDirectional(
         bottom: BorderSide(),
         start: BorderSide(),
       );
 
-  Widget defaultChild(BuildContext context) => Center(
+  Widget _defaultChild(BuildContext context) => Center(
         child: Text(
           WeekDay.fromIntWeekday(date.weekday).symbol,
-          style: TextStyle(color: color ?? defaultColor(isHoliday)),
+          style: TextStyle(color: color ?? _defaultColor(isHoliday)),
         ),
       );
 }

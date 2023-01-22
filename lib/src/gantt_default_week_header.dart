@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 class GanttChartDefaultWeekHeader extends StatelessWidget {
+  static const defaultColor = Colors.white;
+  static final defaultBackgroundColor = Colors.blue.shade900;
+
   final Color? color;
   final Color? backgroundColor;
   final BoxBorder? border;
@@ -22,22 +25,18 @@ class GanttChartDefaultWeekHeader extends StatelessWidget {
       padding: const EdgeInsetsDirectional.only(start: 8, top: 1, bottom: 1),
       decoration: BoxDecoration(
         color: backgroundColor ?? defaultBackgroundColor,
-        border: border ?? defaultBorder,
+        border: border ?? _defaultBorder,
       ),
-      child: widgetBuilder?.call(context) ?? defaultChild(context),
+      child: widgetBuilder?.call(context) ?? _defaultChild(context),
     );
   }
 
-  Color get defaultColor => Colors.white;
-
-  Color get defaultBackgroundColor => Colors.blue.shade900;
-
-  BoxBorder get defaultBorder => const BorderDirectional(
+  BoxBorder get _defaultBorder => const BorderDirectional(
         start: BorderSide(),
         bottom: BorderSide(),
       );
 
-  Widget defaultChild(BuildContext context) =>
+  Widget _defaultChild(BuildContext context) =>
       Center(child: LayoutBuilder(builder: (context, constraints) {
         String txt;
         if (constraints.maxWidth < 50) {

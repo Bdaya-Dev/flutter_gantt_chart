@@ -28,12 +28,12 @@ class GanttChartDefaultStickyAreaCell extends StatelessWidget {
         ),
       ),
       child: Center(
-        child: widgetBuilder?.call(context) ?? defaultChild(context),
+        child: widgetBuilder?.call(context) ?? _defaultChild(context),
       ),
     );
   }
 
-  Widget defaultChild(BuildContext context) => Text(
+  Widget _defaultChild(BuildContext context) => Text(
         event.getDisplayName(context),
       );
 }
