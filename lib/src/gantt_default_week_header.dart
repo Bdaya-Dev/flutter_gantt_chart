@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gantt_chart/src/dateweek_ext.dart';
 
 class GanttChartDefaultWeekHeader extends StatelessWidget {
   const GanttChartDefaultWeekHeader({
@@ -7,16 +8,7 @@ class GanttChartDefaultWeekHeader extends StatelessWidget {
   }) : super(key: key);
   final DateTime weekDate;
 
-  int get weekNumberWithinThisYear {
-    final numberWeek = (DateTime.utc(
-                    weekDate.year, weekDate.month, weekDate.day)
-                .difference(DateTime.utc(weekDate.year, 1, 1, 0, 0, 0, 0, 0))
-                .inDays /
-            7)
-        .ceil();
-
-    return numberWeek;
-  }
+  int get weekNumberWithinThisYear => weekDate.weekOfYear;
 
   @override
   Widget build(BuildContext context) {

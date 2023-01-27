@@ -20,9 +20,9 @@ void main() {
       weekDate: DateTime(2022, 12, 31, 23, 59, 59),
     );
 
-    expect(0, widgetStartOfYear.weekNumberWithinThisYear);
-    expect(1, widgetWeek1.weekNumberWithinThisYear);
-    expect(22, widgetMidOfYear.weekNumberWithinThisYear);
-    expect(52, widgetEndOfYear.weekNumberWithinThisYear);
+    expect(widgetStartOfYear.weekNumberWithinThisYear, 52); // of previous year
+    expect(widgetWeek1.weekNumberWithinThisYear, 1);
+    expect(widgetMidOfYear.weekNumberWithinThisYear, 22);
+    expect(widgetEndOfYear.weekNumberWithinThisYear, 52);
   });
 }
