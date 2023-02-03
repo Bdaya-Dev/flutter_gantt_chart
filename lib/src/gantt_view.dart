@@ -1,11 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:gantt_chart/src/gantt_default_day_header.dart';
-import 'package:gantt_chart/src/gantt_default_week_header.dart';
-import 'package:gantt_chart/src/week_day.dart';
-
-import 'event.dart';
-import 'gantt_default_event_row_per_week.dart';
+import 'package:gantt_chart/gantt_chart.dart';
 
 typedef IsExtraHolidayFunc = bool Function(BuildContext context, DateTime date);
 typedef EventCellBuilderFunction = Widget Function(
@@ -43,12 +38,23 @@ class GanttChartView extends StatefulWidget {
     this.eventCellPerDayBuilder,
     this.holidayColor,
     this.showStickyArea = true,
+    this.scrollController,
+    this.scrollPhysics,
   })  : assert(
           !weekEnds.contains(startOfTheWeek),
           'startOfTheWeek must be a work day',
         ),
         super(key: key);
 
+  /// The horizontal scroll controller that gets passed to the internal listview
+  final ScrollController? scrollController;
+
+  /// The horizontal scroll physics that gets passed to the internal listview
+  final ScrollPhysics? scrollPhysics;
+
+  /// Custom builder for sticky area per event
+  ///
+  /// default([GanttChartDefaultStickyAreaCell])
   final Widget Function(
     BuildContext context,
     int eventIndex,
@@ -56,10 +62,19 @@ class GanttChartView extends StatefulWidget {
     Color eventColor,
   )? stickyAreaEventBuilder;
 
+  /// Custom builder for sticky area as a header for the weeks row
+  ///
+  /// default(`null`)
   final WidgetBuilder? stickyAreaWeekBuilder;
+
+  /// Custom builder for sticky area as a header for the days row
+  ///
+  /// default(`null`)
   final WidgetBuilder? stickyAreaDayBuilder;
 
   /// Color to mark holiday
+  ///
+  /// default(`null`)
   final Color? holidayColor;
 
   /// Initial datetime
@@ -71,15 +86,16 @@ class GanttChartView extends StatefulWidget {
   /// override this to check if specific date is a holiday
   final IsExtraHolidayFunc? isExtraHoliday;
 
+  /// list of events
   final List<GanttEventBase> events;
 
+  /// show days row
   final bool showDays;
 
   /// the week header builder (gets called for every week)
   ///
   /// [weekDate] is the start of the week, which will always be a [startOfTheWeek]
-  final Widget Function(BuildContext context, DateTime weekDate)?
-      weekHeaderBuilder;
+  final Widget Function(BuildContext context, DateTime weekDate)? weekHeaderBuilder;
 
   /// Show sticky row headers on the left
   final bool showStickyArea;
@@ -88,8 +104,11 @@ class GanttChartView extends StatefulWidget {
   final double stickyAreaWidth;
 
   /// the day header builder
-  final Widget Function(BuildContext context, DateTime date)? dayHeaderBuilder;
+  final Widget Function(BuildContext context, DateTime date, bool isHoliday)? dayHeaderBuilder;
 
+  /// Custom builder for the event row per week
+  ///
+  /// default([GanttChartDefaultEventRowPerWeekBuilder])
   final Widget Function(
     BuildContext context,
     DateTime eventStart,
@@ -102,6 +121,9 @@ class GanttChartView extends StatefulWidget {
     Color eventColor,
   )? eventRowPerWeekBuilder;
 
+  /// Custom builder for the event cell per day
+  ///
+  /// default([GanttChartDefaultEventRowPerDayBuilder])
   final EventCellBuilderFunction? eventCellPerDayBuilder;
 
   /// a set of [WeekDay]s which are considered holidays that occur every week
@@ -133,11 +155,14 @@ class GanttChartViewState extends State<GanttChartView> {
   final extraHolidayCache = <DateTime>{};
 
   Set<WeekDay> get weekEnds => widget.weekEnds;
+
   double get weekWidth => widget.dayWidth * 7;
+
   WeekDay get startOfTheWeek => widget.startOfTheWeek;
 
   late DateTime startDate;
   late DateTime weekOfStartDate;
+
   double durationToWeekOffset(Duration duration) {
     final inWeeks = duration.inDays ~/ 7;
     return inWeeks * weekWidth;
@@ -150,26 +175,38 @@ class GanttChartViewState extends State<GanttChartView> {
   }
 
   final eventColors = <Color>[];
-  @override
-  void initState() {
-    super.initState();
+  void initFromCurrentWidget() {
     eventColors.clear();
-    eventColors.addAll(widget.events.asMap().entries.map((e) =>
-        e.value.suggestedColor ??
-        Colors.primaries[e.key % Colors.primaries.length]));
-
-    controller = ScrollController(
-        // initialScrollOffset: durationToWeekOffset(
-        //   Duration(days: widget.maxDuration.inDays ~/ 2),
-        // ),
-        );
+    eventColors.addAll(widget.events.mapIndexed((index, element) => element.suggestedColor ?? Colors.primaries[index % Colors.primaries.length]));
+    controller = widget.scrollController ?? ScrollController();
     startDate = DateUtils.dateOnly(widget.startDate);
     weekOfStartDate = getWeekOf(startDate);
   }
 
   @override
+  void initState() {
+    super.initState();
+    initFromCurrentWidget();
+  }
+
+  @override
+  void didUpdateWidget(covariant GanttChartView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final newScrollController = widget.scrollController;
+    final oldScrollController = oldWidget.scrollController;
+    if (newScrollController != oldScrollController && oldScrollController == null) {
+      //moves from null to not-null, dispose self-created controller
+      controller.dispose();
+    }
+    initFromCurrentWidget();
+  }
+
+  @override
   void dispose() {
-    controller.dispose();
+    if (widget.scrollController == null) {
+      // dispose self-created controller
+      controller.dispose();
+    }
     super.dispose();
   }
 
@@ -210,25 +247,11 @@ class GanttChartViewState extends State<GanttChartView> {
                   final eventColor = eventColors[index];
                   return SizedBox(
                     height: widget.eventHeight,
-                    child: widget.stickyAreaEventBuilder
-                            ?.call(context, index, event, eventColor) ??
-                        Container(
-                          decoration: BoxDecoration(
-                            color: eventColors[index],
-                            border: BorderDirectional(
-                              top: index == 0
-                                  ? const BorderSide()
-                                  : BorderSide.none,
-                              start: const BorderSide(),
-                              end: const BorderSide(),
-                              bottom: const BorderSide(),
-                            ),
-                          ),
-                          child: Center(
-                            child: Text(
-                              event.getDisplayName(context),
-                            ),
-                          ),
+                    child: widget.stickyAreaEventBuilder?.call(context, index, event, eventColor) ??
+                        GanttChartDefaultStickyAreaCell(
+                          event: event,
+                          eventIndex: index,
+                          eventColor: eventColor,
                         ),
                   );
                 })
@@ -237,15 +260,13 @@ class GanttChartViewState extends State<GanttChartView> {
           ),
         Expanded(
           child: SizedBox(
-            height: widget.weekHeaderHeight +
-                (widget.showDays ? widget.dayHeaderHeight : 0) +
-                (widget.eventHeight * widget.events.length),
+            height: widget.weekHeaderHeight + (widget.showDays ? widget.dayHeaderHeight : 0) + (widget.eventHeight * widget.events.length),
             child: ListView.builder(
+              physics: widget.scrollPhysics,
+              itemExtent: weekWidth,
               scrollDirection: Axis.horizontal,
               controller: controller,
-              itemCount: widget.maxDuration == null
-                  ? null
-                  : (widget.maxDuration!.inDays / 7).ceil(),
+              itemCount: widget.maxDuration == null ? null : (widget.maxDuration!.inDays / 7).ceil(),
               itemBuilder: (context, index) {
                 //map index to week
 
@@ -253,93 +274,86 @@ class GanttChartViewState extends State<GanttChartView> {
                 final date = startDate.add(Duration(days: index * 7));
                 final weekDate = getWeekOf(date);
 
-                return SizedBox(
-                  width: weekWidth,
-                  child: Column(
-                    children: [
-                      //Week Header row
-                      SizedBox(
-                        height: widget.weekHeaderHeight,
-                        width: weekWidth,
-                        child:
-                            widget.weekHeaderBuilder?.call(context, weekDate) ??
-                                GanttChartDefaultWeekHeader(
-                                  weekDate: weekDate,
-                                ),
-                      ),
-                      if (widget.showDays)
-                        SizedBox(
-                          height: widget.dayHeaderHeight,
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              for (int i = 0; i < 7; i++)
-                                //Header row
-                                SizedBox(
-                                  width: widget.dayWidth,
-                                  child: widget.dayHeaderBuilder?.call(context,
-                                          weekDate.add(Duration(days: i))) ??
-                                      GanttChartDefaultDayHeader(
-                                        date: weekDate.add(Duration(days: i)),
-                                        isHoliday: isHolidayCached,
-                                      ),
-                                ),
-                            ],
+                return Column(
+                  key: ValueKey(weekDate),
+                  children: [
+                    //Week Header row
+                    SizedBox(
+                      height: widget.weekHeaderHeight,
+                      width: weekWidth,
+                      child: widget.weekHeaderBuilder?.call(context, weekDate) ??
+                          GanttChartDefaultWeekHeader(
+                            weekDate: weekDate,
                           ),
+                    ),
+                    if (widget.showDays)
+                      SizedBox(
+                        height: widget.dayHeaderHeight,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: List<Widget>.generate(DateTime.daysPerWeek, (i) {
+                            final day = weekDate.add(Duration(days: i));
+                            final isHoliday = isHolidayCached(context, day);
+                            //Header row
+                            return SizedBox(
+                              width: widget.dayWidth,
+                              child: widget.dayHeaderBuilder?.call(context, day, isHoliday) ??
+                                  GanttChartDefaultDayHeader(date: day, isHoliday: isHoliday),
+                            );
+                          }).toList(),
                         ),
-
-                      //Body
-                      ...widget.events.mapIndexed(
-                        (index, e) {
-                          final actStartDate = e.getStartDateInclusive(
-                            context,
-                            startDate,
-                            weekEnds,
-                            isHolidayCached,
-                          );
-                          final actEndDate = e.getEndDateExeclusive(
-                            context,
-                            actStartDate,
-                            weekEnds,
-                            isHolidayCached,
-                          );
-
-                          final eventColor = eventColors[index];
-                          return Container(
-                            decoration: BoxDecoration(
-                                border: Border(
-                              bottom: index == widget.events.length - 1
-                                  ? const BorderSide()
-                                  : BorderSide.none,
-                            )),
-                            height: widget.eventHeight,
-                            child: widget.eventRowPerWeekBuilder?.call(
-                                  context,
-                                  actStartDate,
-                                  actEndDate,
-                                  widget.dayWidth,
-                                  weekWidth,
-                                  weekDate,
-                                  isHolidayCached,
-                                  e,
-                                  eventColor,
-                                ) ??
-                                GanttChartDefaultEventRowPerWeekBuilder(
-                                  eventEndDate: actEndDate,
-                                  eventStartDate: actStartDate,
-                                  dayWidth: widget.dayWidth,
-                                  event: e,
-                                  isHolidayFunc: isHolidayCached,
-                                  weekDate: weekDate,
-                                  func: widget.eventCellPerDayBuilder,
-                                  holidayColor: widget.holidayColor,
-                                  eventColor: eventColor,
-                                ),
-                          );
-                        },
                       ),
-                    ],
-                  ),
+
+                    //Body
+                    ...widget.events.mapIndexed(
+                      (index, e) {
+                        final actStartDate = e.getStartDateInclusive(
+                          context,
+                          startDate,
+                          weekEnds,
+                          isHolidayCached,
+                        );
+                        final actEndDate = e.getEndDateExeclusive(
+                          context,
+                          actStartDate,
+                          weekEnds,
+                          isHolidayCached,
+                        );
+
+                        final eventColor = eventColors[index];
+                        return Container(
+                          decoration: BoxDecoration(
+                            border: Border(
+                              bottom: index == widget.events.length - 1 ? const BorderSide() : BorderSide.none,
+                            ),
+                          ),
+                          height: widget.eventHeight,
+                          child: widget.eventRowPerWeekBuilder?.call(
+                                context,
+                                actStartDate,
+                                actEndDate,
+                                widget.dayWidth,
+                                weekWidth,
+                                weekDate,
+                                isHolidayCached,
+                                e,
+                                eventColor,
+                              ) ??
+                              GanttChartDefaultEventRowPerWeekBuilder(
+                                eventEndDate: actEndDate,
+                                eventStartDate: actStartDate,
+                                dayWidth: widget.dayWidth,
+                                event: e,
+                                isHolidayFunc: isHolidayCached,
+                                weekDate: weekDate,
+                                func: widget.eventCellPerDayBuilder,
+                                holidayColor: widget.holidayColor,
+                                eventColor: eventColor,
+                              ),
+                        );
+                      },
+                    ),
+                  ],
                 );
               },
             ),

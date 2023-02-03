@@ -24,7 +24,7 @@ GanttChartView(
     maxDuration: const Duration(days: 30 * 2), //optional, set to null for infinite horizontal scroll
     startDate: DateTime(2022, 6, 7), //required 
     dayWidth: 30, //column width for each day
-    eventHeight: 30, //row width for events
+    eventHeight: 30, //row height for events
     stickyAreaWidth: 200, //sticky area width
     showStickyArea: true, //show sticky area or not
     showDays: true, //show days or not
