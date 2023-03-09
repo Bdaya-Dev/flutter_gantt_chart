@@ -1,4 +1,4 @@
-## 0.3.0 - 09 February 2023
+## 0.3.0 - 09 March 2023
 
 * Added Week numbers - [PR #5](https://github.com/Bdaya-Dev/flutter_gantt_chart/pull/5) [PR #6](https://github.com/Bdaya-Dev/flutter_gantt_chart/pull/6)
 
