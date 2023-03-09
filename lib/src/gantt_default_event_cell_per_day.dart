@@ -35,7 +35,8 @@ class GanttChartDefaultEventRowPerDayBuilder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isWithinEvent = !DateUtils.isSameDay(actStartDate, actEndDate) &&
-        (DateUtils.isSameDay(actStartDate, dayDate) || dayDate.isAfter(actStartDate) && dayDate.isBefore(actEndDate));
+        (DateUtils.isSameDay(actStartDate, dayDate) ||
+            dayDate.isAfter(actStartDate) && dayDate.isBefore(actEndDate));
 
     final color = isHoliday
         ? (holidayColor ?? defaultHolidayColor)
