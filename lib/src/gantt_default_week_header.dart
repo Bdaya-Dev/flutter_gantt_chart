@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+// import 'package:gantt_chart/src/dateweek_ext.dart';
+import 'package:week_of_year/week_of_year.dart';
 
 class GanttChartDefaultWeekHeader extends StatelessWidget {
   static const defaultColor = Colors.white;
@@ -19,6 +21,8 @@ class GanttChartDefaultWeekHeader extends StatelessWidget {
   }) : super(key: key);
   final DateTime weekDate;
 
+  int get weekNumberWithinThisYear => weekDate.weekOfYear;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -36,20 +40,24 @@ class GanttChartDefaultWeekHeader extends StatelessWidget {
         bottom: BorderSide(),
       );
 
-  Widget _defaultChild(BuildContext context) =>
-      Center(child: LayoutBuilder(builder: (context, constraints) {
-        String txt;
-        if (constraints.maxWidth < 50) {
-          txt = weekDate.month.toString();
-        } else if (constraints.maxWidth < 7 * 20) {
-          txt = '${weekDate.month}-${weekDate.year % 100}';
-        } else {
-          txt = '${weekDate.day}-${weekDate.month}-${weekDate.year}';
-        }
+  Widget _defaultChild(BuildContext context) => Center(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            String txt;
+            if (constraints.maxWidth < 50) {
+              txt = weekDate.month.toString();
+            } else if (constraints.maxWidth < 7 * 20) {
+              txt = '${weekDate.month}-${weekDate.year % 100}';
+            } else {
+              txt =
+                  '${weekDate.day}-${weekDate.month}-${weekDate.year}  #$weekNumberWithinThisYear';
+            }
 
-        return Text(
-          txt,
-          style: TextStyle(color: color ?? defaultColor),
-        );
-      }));
+            return Text(
+              txt,
+              style: TextStyle(color: color ?? defaultColor),
+            );
+          },
+        ),
+      );
 }

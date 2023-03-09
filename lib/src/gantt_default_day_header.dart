@@ -50,7 +50,7 @@ class GanttChartDefaultDayHeader extends StatelessWidget {
 
   Widget _defaultChild(BuildContext context) => Center(
         child: Text(
-          WeekDay.fromIntWeekday(date.weekday).symbol,
+          '${WeekDay.fromIntWeekday(date.weekday).symbol}\n${date.day}',
           style: TextStyle(color: color ?? _defaultColor(isHoliday)),
         ),
       );

@@ -14,6 +14,7 @@ class MyCustomScrollBehavior extends MaterialScrollBehavior {
   Set<PointerDeviceKind> get dragDevices => {
         PointerDeviceKind.touch,
         PointerDeviceKind.mouse,
+        PointerDeviceKind.trackpad
         // etc.
       };
 }
@@ -28,9 +29,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       scrollBehavior: MyCustomScrollBehavior(),
       title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: ThemeData(primarySwatch: Colors.blue),
       home: const MyHomePage(),
     );
   }
@@ -75,12 +74,14 @@ class _MyHomePageState extends State<MyHomePage> {
       autofocus: true,
       onKey: (event) {
         if (event.isKeyPressed(LogicalKeyboardKey.arrowRight)) {
-          if (scrollController.offset < scrollController.position.maxScrollExtent) {
+          if (scrollController.offset <
+              scrollController.position.maxScrollExtent) {
             scrollController.jumpTo(scrollController.offset + 50);
           }
         }
         if (event.isKeyPressed(LogicalKeyboardKey.arrowLeft)) {
-          if (scrollController.offset > scrollController.position.minScrollExtent) {
+          if (scrollController.offset >
+              scrollController.position.minScrollExtent) {
             scrollController.jumpTo(scrollController.offset - 50);
           }
         }
@@ -165,7 +166,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           IconButton(
                             onPressed: currentOffset > 0
                                 ? () {
-                                    scrollController.jumpTo(scrollController.offset - 50);
+                                    scrollController
+                                        .jumpTo(scrollController.offset - 50);
                                   }
                                 : null,
                             color: Colors.black,
@@ -178,7 +180,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           IconButton(
                             onPressed: currentOffset < maxOffset
                                 ? () {
-                                    scrollController.jumpTo(scrollController.offset + 50);
+                                    scrollController
+                                        .jumpTo(scrollController.offset + 50);
                                   }
                                 : null,
                             color: Colors.black,
@@ -200,11 +203,13 @@ class _MyHomePageState extends State<MyHomePage> {
                 stickyAreaWidth: 200,
                 showStickyArea: showStickyArea,
                 stickyAreaEventBuilder: customStickyArea
-                    ? (context, eventIndex, event, eventColor) => eventIndex == 0
+                    ? (context, eventIndex, event, eventColor) => eventIndex ==
+                            0
                         ? Container(
                             color: Colors.yellow,
                             child: Center(
-                              child: Text("Custom Widget: ${event.displayName}"),
+                              child:
+                                  Text("Custom Widget: ${event.displayName}"),
                             ),
                           )
                         : GanttChartDefaultStickyAreaCell(
@@ -227,11 +232,13 @@ class _MyHomePageState extends State<MyHomePage> {
                         ))
                     : null,
                 dayHeaderBuilder: customDayHeader
-                    ? (context, date, bool isHoliday) => GanttChartDefaultDayHeader(
+                    ? (context, date, bool isHoliday) =>
+                        GanttChartDefaultDayHeader(
                           date: date,
                           isHoliday: isHoliday,
                           color: isHoliday ? Colors.yellow : Colors.black,
-                          backgroundColor: isHoliday ? Colors.grey : Colors.yellow,
+                          backgroundColor:
+                              isHoliday ? Colors.grey : Colors.yellow,
                         )
                     : null,
                 showDays: showDaysRow,

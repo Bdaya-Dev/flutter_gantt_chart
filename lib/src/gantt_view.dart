@@ -28,7 +28,7 @@ class GanttChartView extends StatefulWidget {
     this.dayWidth = 30,
     this.eventHeight = 30,
     this.weekHeaderHeight = 30,
-    this.dayHeaderHeight = 30,
+    this.dayHeaderHeight = 40,
     this.weekEnds = const {WeekDay.friday, WeekDay.saturday},
     this.dayHeaderBuilder,
     this.weekHeaderBuilder,
@@ -95,7 +95,8 @@ class GanttChartView extends StatefulWidget {
   /// the week header builder (gets called for every week)
   ///
   /// [weekDate] is the start of the week, which will always be a [startOfTheWeek]
-  final Widget Function(BuildContext context, DateTime weekDate)? weekHeaderBuilder;
+  final Widget Function(BuildContext context, DateTime weekDate)?
+      weekHeaderBuilder;
 
   /// Show sticky row headers on the left
   final bool showStickyArea;
@@ -104,7 +105,8 @@ class GanttChartView extends StatefulWidget {
   final double stickyAreaWidth;
 
   /// the day header builder
-  final Widget Function(BuildContext context, DateTime date, bool isHoliday)? dayHeaderBuilder;
+  final Widget Function(BuildContext context, DateTime date, bool isHoliday)?
+      dayHeaderBuilder;
 
   /// Custom builder for the event row per week
   ///
@@ -177,7 +179,9 @@ class GanttChartViewState extends State<GanttChartView> {
   final eventColors = <Color>[];
   void initFromCurrentWidget() {
     eventColors.clear();
-    eventColors.addAll(widget.events.mapIndexed((index, element) => element.suggestedColor ?? Colors.primaries[index % Colors.primaries.length]));
+    eventColors.addAll(widget.events.mapIndexed((index, element) =>
+        element.suggestedColor ??
+        Colors.primaries[index % Colors.primaries.length]));
     controller = widget.scrollController ?? ScrollController();
     startDate = DateUtils.dateOnly(widget.startDate);
     weekOfStartDate = getWeekOf(startDate);
@@ -194,7 +198,8 @@ class GanttChartViewState extends State<GanttChartView> {
     super.didUpdateWidget(oldWidget);
     final newScrollController = widget.scrollController;
     final oldScrollController = oldWidget.scrollController;
-    if (newScrollController != oldScrollController && oldScrollController == null) {
+    if (newScrollController != oldScrollController &&
+        oldScrollController == null) {
       //moves from null to not-null, dispose self-created controller
       controller.dispose();
     }
@@ -247,7 +252,8 @@ class GanttChartViewState extends State<GanttChartView> {
                   final eventColor = eventColors[index];
                   return SizedBox(
                     height: widget.eventHeight,
-                    child: widget.stickyAreaEventBuilder?.call(context, index, event, eventColor) ??
+                    child: widget.stickyAreaEventBuilder
+                            ?.call(context, index, event, eventColor) ??
                         GanttChartDefaultStickyAreaCell(
                           event: event,
                           eventIndex: index,
@@ -260,13 +266,17 @@ class GanttChartViewState extends State<GanttChartView> {
           ),
         Expanded(
           child: SizedBox(
-            height: widget.weekHeaderHeight + (widget.showDays ? widget.dayHeaderHeight : 0) + (widget.eventHeight * widget.events.length),
+            height: widget.weekHeaderHeight +
+                (widget.showDays ? widget.dayHeaderHeight : 0) +
+                (widget.eventHeight * widget.events.length),
             child: ListView.builder(
               physics: widget.scrollPhysics,
               itemExtent: weekWidth,
               scrollDirection: Axis.horizontal,
               controller: controller,
-              itemCount: widget.maxDuration == null ? null : (widget.maxDuration!.inDays / 7).ceil(),
+              itemCount: widget.maxDuration == null
+                  ? null
+                  : (widget.maxDuration!.inDays / 7).ceil(),
               itemBuilder: (context, index) {
                 //map index to week
 
@@ -281,24 +291,28 @@ class GanttChartViewState extends State<GanttChartView> {
                     SizedBox(
                       height: widget.weekHeaderHeight,
                       width: weekWidth,
-                      child: widget.weekHeaderBuilder?.call(context, weekDate) ??
-                          GanttChartDefaultWeekHeader(
-                            weekDate: weekDate,
-                          ),
+                      child:
+                          widget.weekHeaderBuilder?.call(context, weekDate) ??
+                              GanttChartDefaultWeekHeader(
+                                weekDate: weekDate,
+                              ),
                     ),
                     if (widget.showDays)
                       SizedBox(
                         height: widget.dayHeaderHeight,
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: List<Widget>.generate(DateTime.daysPerWeek, (i) {
+                          children:
+                              List<Widget>.generate(DateTime.daysPerWeek, (i) {
                             final day = weekDate.add(Duration(days: i));
                             final isHoliday = isHolidayCached(context, day);
                             //Header row
                             return SizedBox(
                               width: widget.dayWidth,
-                              child: widget.dayHeaderBuilder?.call(context, day, isHoliday) ??
-                                  GanttChartDefaultDayHeader(date: day, isHoliday: isHoliday),
+                              child: widget.dayHeaderBuilder
+                                      ?.call(context, day, isHoliday) ??
+                                  GanttChartDefaultDayHeader(
+                                      date: day, isHoliday: isHoliday),
                             );
                           }).toList(),
                         ),
@@ -324,7 +338,9 @@ class GanttChartViewState extends State<GanttChartView> {
                         return Container(
                           decoration: BoxDecoration(
                             border: Border(
-                              bottom: index == widget.events.length - 1 ? const BorderSide() : BorderSide.none,
+                              bottom: index == widget.events.length - 1
+                                  ? const BorderSide()
+                                  : BorderSide.none,
                             ),
                           ),
                           height: widget.eventHeight,
